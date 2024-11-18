@@ -1,0 +1,25 @@
+{
+  "tasks": {
+    "clean": "rm -rf dist/",
+    "check": "deno lint && deno fmt",
+    "dts": "deno run -A npm:typescript/tsc src/tokan.ts --declaration --declarationDir ./dist/ --target ESNext && deno run -RW build/dts.ts && rm src/tokan.js",
+    "build": "deno run check && deno run clean && deno -RWE --allow-run=/home/ragnarokkr/.cache/deno/npm/registry.npmjs.org/@esbuild/linux-x64/0.24.0/bin/esbuild build/build.ts && deno run dts",
+    "publish": "deno run -RWE build/publish.ts"
+  },
+  "imports": {
+    "@jordanhall/typeguard": "jsr:@jordanhall/typeguard@^0.1.0",
+    "@std/fs": "jsr:@std/fs@^1.0.5",
+    "@std/path": "jsr:@std/path@^1.0.8",
+    "esbuild": "npm:esbuild"
+  },
+  "lint": {
+    "exclude": [".jj/", "dist/", "node_modules/", ".git/"]
+  },
+  "fmt": {
+    "indentWidth": 2,
+    "exclude": [".jj/", "dist/", "node_modules/", ".git/"]
+  },
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "dom.asynciterable", "deno.ns"]
+  }
+}

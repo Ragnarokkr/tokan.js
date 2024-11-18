@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Test Tokan class</h1>
+    <div id="container"></div>
+    <button id="btn-add">Test added event</button>
+    <button id="btn-remove">Test removed event</button>
+    <button id="btn-attr-change">Test attributeChanged event</button>
+    <button id="btn-char-change">Test characterDataChanged event</button>
+    <p>Open console to see messages.</p>
+
+    <script>
+      const btnAdd = document.querySelector("#btn-add");
+      const btnRemove = document.querySelector("#btn-remove");
+      const btnAttrChange = document.querySelector("#btn-attr-change");
+      const btnCharChange = document.querySelector("#btn-char-change");
+
+      btnAdd.addEventListener("click", () => {
+        document.querySelector("#container").innerHTML =
+          '<p id="parag1" class="simple">Paragrafo 1</p><p id="parag2" class="simple">Paragrafo 2</p>';
+      });
+
+      btnRemove.addEventListener("click", () => {
+        document.querySelector("#container").innerHTML = "";
+      });
+
+      btnAttrChange.addEventListener("click", () => {
+        document.querySelector("#parag1")?.setAttribute("id", "paragNew");
+        document.querySelector("#parag2")?.classList.add("newClass");
+      });
+
+      btnCharChange.addEventListener("click", () => {
+        document.querySelector("#parag2").childNodes[0].data = "Text Changed";
+      });
+    </script>
+
+    <script type="module">
+      import { Tokan } from "../dist/tokan.js";
+      const observer = new Tokan("#container");
+      const attr = observer.watch(Tokan.MutationKinds.Attr, {
+        subtree: true,
+        filters: ["class", (node) => node.id === "parag2"],
+      });
+      const char = observer.watch(Tokan.MutationKinds.CharData, { subtree: true });
+      const nodes = observer.watch(Tokan.MutationKinds.Nodes, {
+        subtree: true,
+        filters: [(node) => node?.nodeName === "EM"],
+      });
+      const nodes2 = observer.watch(Tokan.MutationKinds.Nodes, {
+        subtree: true,
+      });
+      observer.on(
+        Tokan.MutationEvents.AttrChanged,
+        (node, data) => console.log("Attr Changed", { node, data }),
+      )
+        .on(
+          Tokan.MutationEvents.CharDataChanged,
+          (node, data) => console.log("Char Changed", { node, data }),
+        )
+        .on(Tokan.MutationEvents.Added, (node) => console.log("Added", node))
+        .on(Tokan.MutationEvents.Removed, (node) => console.log("Removed", node));
+      observer.start();
+      console.log(observer);
+      console.log(attr, char, nodes);
+    </script>
+  </body>
+</html>
