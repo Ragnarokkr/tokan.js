@@ -26,6 +26,59 @@ Key Features:
 
 ---
 
+## Example Usage
+
+### Setting Up an Observer
+
+```typescript
+const tokan = new Tokan("#myElement");
+
+const filterCallback: TokanMutationFilterCallback = (node) =>
+  node.nodeName === "A";
+
+const observerAttrsId = tokan.watch(Tokan.MutationKinds.Attr, {
+  oldValue: true,
+  subtree: true,
+  filters: ["id", "class", "disabled"],
+});
+
+const observerNodesID = tokan.watch(Tokan.MutationKinds.Nodes, {
+  subtree: true,
+  filters: [filterCallback],
+});
+
+tokan.on(Tokan.MutationEvents.Added, (node) => {
+  console.log("Node added:", node);
+});
+
+tokan.on(Tokan.MutationEvents.AttrChanged, (node, data) => {
+  console.log("Attribute changed:", node, data);
+});
+
+tokan.start();
+```
+
+### Stopping an Observer
+
+```typescript
+tokan.stop();
+tokan.unwatch();
+```
+
+### Listening for Multiple Events
+
+```typescript
+tokan.on(Tokan.MutationEvents.Removed, (node) => {
+  console.log("Node removed:", node);
+});
+
+tokan.on(Tokan.MutationEvents.CharDataChanged, (node, data) => {
+  console.log("Character data changed:", node, data);
+});
+
+tokan.start();
+```
+
 ## Types
 
 ### TokanMutationFilterCallback
@@ -389,56 +442,3 @@ Key Features:
   tokan.stop(observerId);
   tokan.stop(); // Stops all observers
   ```
-
-## Example Usage
-
-### Setting Up an Observer
-
-```typescript
-const tokan = new Tokan("#myElement");
-
-const filterCallback: TokanMutationFilterCallback = (node) =>
-  node.nodeName === "A";
-
-const observerAttrsId = tokan.watch(Tokan.MutationKinds.Attr, {
-  oldValue: true,
-  subtree: true,
-  filters: ["id", "class", "disabled"],
-});
-
-const observerNodesID = tokan.watch(Tokan.MutationKinds.Nodes, {
-  subtree: true,
-  filters: [filterCallback],
-});
-
-tokan.on(Tokan.MutationEvents.Added, (node) => {
-  console.log("Node added:", node);
-});
-
-tokan.on(Tokan.MutationEvents.AttrChanged, (node, data) => {
-  console.log("Attribute changed:", node, data);
-});
-
-tokan.start();
-```
-
-### Stopping an Observer
-
-```typescript
-tokan.stop();
-tokan.unwatch();
-```
-
-### Listening for Multiple Events
-
-```typescript
-tokan.on(Tokan.MutationEvents.Removed, (node) => {
-  console.log("Node removed:", node);
-});
-
-tokan.on(Tokan.MutationEvents.CharDataChanged, (node, data) => {
-  console.log("Character data changed:", node, data);
-});
-
-tokan.start();
-```
